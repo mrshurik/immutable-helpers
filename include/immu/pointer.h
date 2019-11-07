@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <functional>
 
 namespace immu {
 
@@ -85,9 +86,6 @@ ImmutableDataPtr<ToType> dynamic_pointer_cast(const ImmutableDataPtr<FromType>& 
 }
 
 namespace std {
-
-template <typename Type>
-struct hash;
 
 template <typename Type>
 struct hash<immu::ImmutableDataPtr<Type>> : private hash<const Type*> {

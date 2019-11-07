@@ -1,0 +1,11 @@
+language: cpp
+
+jobs:
+  include:
+    - os: linux
+      dist: xenial
+    - os: osx
+    - os: windows
+          
+script: mkdir build && cd build && cmake .. && cmake --build . && ctest
+

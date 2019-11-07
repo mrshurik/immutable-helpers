@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD 11)
 file(GLOB INCLUDES include/immu/*.h)
 
 add_library(immu INTERFACE)
+
 target_sources(immu INTERFACE ${INCLUDES})
 
 target_include_directories(immu INTERFACE include)
