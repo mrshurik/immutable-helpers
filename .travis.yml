@@ -5,7 +5,6 @@ jobs:
     - os: linux
       dist: xenial
     - os: osx
-    - os: windows
           
-script: mkdir build && cd build && cmake .. && cmake --build . && ctest -c Debug
+script: cmake . && cmake --build . && ctest
 
