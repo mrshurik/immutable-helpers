@@ -7,5 +7,5 @@ jobs:
     - os: osx
     - os: windows
           
-script: mkdir build && cd build && cmake .. && cmake --build . && ctest
+script: mkdir build && cd build && cmake .. && cmake --build . && ctest -c Debug
 

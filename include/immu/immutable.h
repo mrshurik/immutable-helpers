@@ -27,7 +27,7 @@ public:
         : m_value(std::forward<Args>(args)...) {}
 
     const Type& get() const noexcept { return m_value; }
-    ImmutableDataPtr<Type> ptr() const noexcept { return immutable_cast<Type>(&m_value); }
+    ImmutablePtr<Type> ptr() const noexcept { return immutable_cast<Type>(&m_value); }
 
     operator const Type& () const noexcept { return m_value; }
 

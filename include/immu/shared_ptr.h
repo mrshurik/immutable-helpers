@@ -8,31 +8,31 @@
 namespace immu {
 
 template <typename Type>
-class ImmutableDataWeakPtr;
+class ImmutableWeakPtr;
 
 template <typename Type>
-class ImmutableDataSharedPtr {
+class ImmutableSharedPtr {
 private:
     // can't have reference to void, so change return type to int
     using TypeOrInt = typename std::conditional<std::is_void<Type>::value, int, Type>::type;
 
 public:
     using element_type = typename std::remove_extent<Type>::type;
-    using weak_type = ImmutableDataWeakPtr<Type>;
+    using weak_type = ImmutableWeakPtr<Type>;
 
     using SharedPtr = std::shared_ptr<const Type>;
 
-    constexpr ImmutableDataSharedPtr() noexcept = default;
+    constexpr ImmutableSharedPtr() noexcept = default;
 
-    ImmutableDataSharedPtr(const ImmutableDataSharedPtr&) = default;
-    ImmutableDataSharedPtr(ImmutableDataSharedPtr&&) = default;
-    ImmutableDataSharedPtr& operator=(const ImmutableDataSharedPtr&) = default;
-    ImmutableDataSharedPtr& operator=(ImmutableDataSharedPtr&&) = default;
+    ImmutableSharedPtr(const ImmutableSharedPtr&) = default;
+    ImmutableSharedPtr(ImmutableSharedPtr&&) = default;
+    ImmutableSharedPtr& operator=(const ImmutableSharedPtr&) = default;
+    ImmutableSharedPtr& operator=(ImmutableSharedPtr&&) = default;
 
-    constexpr ImmutableDataSharedPtr(std::nullptr_t) noexcept : ImmutableDataSharedPtr() {}
+    constexpr ImmutableSharedPtr(std::nullptr_t) noexcept : ImmutableSharedPtr() {}
 
     template <typename Type2>
-    ImmutableDataSharedPtr(ImmutableDataSharedPtr<Type2> ptr,
+    ImmutableSharedPtr(ImmutableSharedPtr<Type2> ptr,
                            typename std::enable_if<std::is_convertible<Type2*, Type*>::value>::type* = nullptr) noexcept
         : m_pointer(std::move(ptr.m_pointer)) {}
 
@@ -41,36 +41,36 @@ public:
     const Type* get() const noexcept { return m_pointer.get(); }
     long use_count() const noexcept { return m_pointer.use_count(); }
 
-    ImmutableDataPtr<Type> ptr() const noexcept { return immutable_cast<Type>(get()); }
+    ImmutablePtr<Type> ptr() const noexcept { return immutable_cast<Type>(get()); }
     const SharedPtr& shared_ptr() const noexcept { return m_pointer; }
 
     explicit
     operator bool() const noexcept { return bool(m_pointer); }
 
-    void swap(ImmutableDataSharedPtr& other) noexcept { m_pointer.swap(other.m_pointer); }
+    void swap(ImmutableSharedPtr& other) noexcept { m_pointer.swap(other.m_pointer); }
     void reset() noexcept { m_pointer.reset(); }
 
     template <typename ToType, typename FromType>
-    friend ImmutableDataSharedPtr<ToType> static_pointer_cast(ImmutableDataSharedPtr<FromType>) noexcept;
+    friend ImmutableSharedPtr<ToType> static_pointer_cast(ImmutableSharedPtr<FromType>) noexcept;
 
     template <typename ToType, typename FromType>
-    friend ImmutableDataSharedPtr<ToType> dynamic_pointer_cast(ImmutableDataSharedPtr<FromType>) noexcept;
+    friend ImmutableSharedPtr<ToType> dynamic_pointer_cast(ImmutableSharedPtr<FromType>) noexcept;
 
     template <typename Type2>
-    friend ImmutableDataSharedPtr<Type2> immutable_cast(std::shared_ptr<const Type2>) noexcept;
+    friend ImmutableSharedPtr<Type2> immutable_cast(std::shared_ptr<const Type2>) noexcept;
 
     template <typename Type2, typename ...Args>
-    friend ImmutableDataSharedPtr<Type2> make_immutable_shared(Args&&...) noexcept;
+    friend ImmutableSharedPtr<Type2> make_immutable_shared(Args&&...) noexcept;
 
-    friend bool operator==(const ImmutableDataSharedPtr& left, const ImmutableDataSharedPtr& right) noexcept {
+    friend bool operator==(const ImmutableSharedPtr& left, const ImmutableSharedPtr& right) noexcept {
         return left.m_pointer == right.m_pointer;
     }
 
-    friend bool operator!=(const ImmutableDataSharedPtr& left, const ImmutableDataSharedPtr& right) noexcept {
+    friend bool operator!=(const ImmutableSharedPtr& left, const ImmutableSharedPtr& right) noexcept {
         return !(left == right);
     }
 
-    friend bool operator<(const ImmutableDataSharedPtr& left, const ImmutableDataSharedPtr& right) noexcept {
+    friend bool operator<(const ImmutableSharedPtr& left, const ImmutableSharedPtr& right) noexcept {
         return left.m_pointer < right.m_pointer;
     }
 
@@ -78,41 +78,41 @@ private:
     static_assert(!std::is_const<element_type>::value, "const type is not required");
 
     template <typename>
-    friend class ImmutableDataSharedPtr;
+    friend class ImmutableSharedPtr;
 
-    ImmutableDataSharedPtr(SharedPtr&& ptr) noexcept : m_pointer(std::move(ptr)) {}
+    ImmutableSharedPtr(SharedPtr&& ptr) noexcept : m_pointer(std::move(ptr)) {}
 
     SharedPtr m_pointer;
 };
 
 template <typename Type>
 inline
-ImmutableDataSharedPtr<Type> immutable_cast(std::shared_ptr<const Type> ptr) noexcept {
+ImmutableSharedPtr<Type> immutable_cast(std::shared_ptr<const Type> ptr) noexcept {
     return std::move(ptr);
 }
 
 template <typename Type>
-class ImmutableDataWeakPtr {
+class ImmutableWeakPtr {
 public:
     using element_type = typename std::remove_extent<Type>::type;
     using WeakPtr = std::weak_ptr<const Type>;
 
-    constexpr ImmutableDataWeakPtr() noexcept = default;
+    constexpr ImmutableWeakPtr() noexcept = default;
 
-    ImmutableDataWeakPtr(const ImmutableDataWeakPtr&) = default;
-    ImmutableDataWeakPtr(ImmutableDataWeakPtr&&) = default;
-    ImmutableDataWeakPtr& operator=(const ImmutableDataWeakPtr&) = default;
-    ImmutableDataWeakPtr& operator=(ImmutableDataWeakPtr&&) = default;
+    ImmutableWeakPtr(const ImmutableWeakPtr&) = default;
+    ImmutableWeakPtr(ImmutableWeakPtr&&) = default;
+    ImmutableWeakPtr& operator=(const ImmutableWeakPtr&) = default;
+    ImmutableWeakPtr& operator=(ImmutableWeakPtr&&) = default;
 
     template <typename Type2>
-    ImmutableDataWeakPtr(ImmutableDataWeakPtr<Type2> ptr,
+    ImmutableWeakPtr(ImmutableWeakPtr<Type2> ptr,
                            typename std::enable_if<std::is_convertible<Type2*, Type*>::value>::type* = nullptr) noexcept
         : m_pointer(std::move(ptr.m_pointer)) {}
 
-    ImmutableDataWeakPtr(const ImmutableDataSharedPtr<Type>& ptr) noexcept
+    ImmutableWeakPtr(const ImmutableSharedPtr<Type>& ptr) noexcept
         : m_pointer(ptr.shared_ptr()) {}
 
-    ImmutableDataWeakPtr& operator=(const ImmutableDataSharedPtr<Type>& ptr) noexcept {
+    ImmutableWeakPtr& operator=(const ImmutableSharedPtr<Type>& ptr) noexcept {
         m_pointer = ptr.shared_ptr();
         return *this;
     }
@@ -120,10 +120,10 @@ public:
     long use_count() const noexcept { return m_pointer.use_count(); }
     bool expired() const noexcept { return m_pointer.expired(); }
 
-    void swap(ImmutableDataWeakPtr& other) noexcept { m_pointer.swap(other.m_pointer); }
+    void swap(ImmutableWeakPtr& other) noexcept { m_pointer.swap(other.m_pointer); }
     void reset() noexcept { m_pointer.reset(); }
 
-    ImmutableDataSharedPtr<Type> lock() const noexcept {
+    ImmutableSharedPtr<Type> lock() const noexcept {
         return immutable_cast<Type>(m_pointer.lock());
     }
 
@@ -131,14 +131,14 @@ private:
     static_assert(!std::is_const<element_type>::value, "const type is not required");
 
     template <typename>
-    friend class ImmutableDataWeakPtr;
+    friend class ImmutableWeakPtr;
 
     WeakPtr m_pointer;
 };
 
 template <typename ToType, typename FromType>
 inline
-ImmutableDataSharedPtr<ToType> static_pointer_cast(ImmutableDataSharedPtr<FromType> ptr) noexcept {
+ImmutableSharedPtr<ToType> static_pointer_cast(ImmutableSharedPtr<FromType> ptr) noexcept {
     static_assert(std::is_convertible<ToType*, FromType*>::value
                   || std::is_convertible<FromType*, ToType*>::value, "invalid static cast");
     return static_pointer_cast<const ToType>(std::move(ptr.m_pointer));
@@ -146,7 +146,7 @@ ImmutableDataSharedPtr<ToType> static_pointer_cast(ImmutableDataSharedPtr<FromTy
 
 template <typename ToType, typename FromType>
 inline
-ImmutableDataSharedPtr<ToType> dynamic_pointer_cast(ImmutableDataSharedPtr<FromType> ptr) noexcept {
+ImmutableSharedPtr<ToType> dynamic_pointer_cast(ImmutableSharedPtr<FromType> ptr) noexcept {
     static_assert(std::is_convertible<ToType*, FromType*>::value
                   || std::is_convertible<FromType*, ToType*>::value, "invalid dynamic cast");
     return dynamic_pointer_cast<const ToType>(std::move(ptr.m_pointer));
@@ -154,7 +154,7 @@ ImmutableDataSharedPtr<ToType> dynamic_pointer_cast(ImmutableDataSharedPtr<FromT
 
 template <typename Type, typename ...Args>
 inline
-ImmutableDataSharedPtr<Type> make_immutable_shared(Args&& ...args) noexcept {
+ImmutableSharedPtr<Type> make_immutable_shared(Args&& ...args) noexcept {
     return std::make_shared<const Type>(std::forward<Args>(args)...);
 }
 
@@ -163,20 +163,20 @@ ImmutableDataSharedPtr<Type> make_immutable_shared(Args&& ...args) noexcept {
 namespace std {
 
 template <typename Type>
-struct hash<immu::ImmutableDataSharedPtr<Type>> : private hash<std::shared_ptr<const Type>> {
-    size_t operator()(const immu::ImmutableDataSharedPtr<Type>& ptr) const noexcept {
+struct hash<immu::ImmutableSharedPtr<Type>> : private hash<std::shared_ptr<const Type>> {
+    size_t operator()(const immu::ImmutableSharedPtr<Type>& ptr) const noexcept {
         return hash<std::shared_ptr<const Type>>::operator()(ptr.shared_ptr()); }
 };
 
 template <typename Type>
 inline
-void swap(immu::ImmutableDataSharedPtr<Type>& left, immu::ImmutableDataSharedPtr<Type>& right) noexcept {
+void swap(immu::ImmutableSharedPtr<Type>& left, immu::ImmutableSharedPtr<Type>& right) noexcept {
     left.swap(right);
 }
 
 template <typename Type>
 inline
-void swap(immu::ImmutableDataWeakPtr<Type>& left, immu::ImmutableDataWeakPtr<Type>& right) noexcept {
+void swap(immu::ImmutableWeakPtr<Type>& left, immu::ImmutableWeakPtr<Type>& right) noexcept {
     left.swap(right);
 }
 

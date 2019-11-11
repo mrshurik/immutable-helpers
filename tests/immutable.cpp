@@ -22,6 +22,9 @@ TEST(immutable, basic) {
     EXPECT_EQ(h1, h2);
     EXPECT_LT(h1, 2);
 
+    ImmutablePtr<Pair> ptr = a3.ptr();
+    EXPECT_EQ(ptr.get(), &a3.get());
+
     EXPECT_TRUE(std::is_trivially_copyable<decltype(h1)>::value);
     EXPECT_FALSE(std::is_copy_assignable<decltype(h1)>::value);
     EXPECT_FALSE(std::is_move_assignable<decltype(h1)>::value);
